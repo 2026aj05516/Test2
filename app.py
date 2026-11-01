@@ -140,7 +140,7 @@ if scaler is not None:
                 live_mcc = matthews_corrcoef(y_true, y_eval_preds)
                 m5.metric("MCC Score", f"{live_mcc:.4f}")
                 
-                c_left, c_right = st.columns(2)
+                                c_left, c_right = st.columns(2)
                 with c_left:
                     st.subheader("🧮 Classification Report Matrix")
                     report_dict = classification_report(y_true, y_eval_preds, output_dict=True, zero_division=0)
@@ -152,26 +152,16 @@ if scaler is not None:
                         
                     st.dataframe(report_frame.style.format(precision=4))
                     
-                    # 💡 COMPLIANT METROLOGY REFERENCE NOTE INSERTED AT THE BOTTOM OF THE TABLE
-                    st.markdown("---")
-                    st.markdown("### 🔎 Performance Metrology Reference Note")
+                    # 💡 SHRUNK FOOTNOTE NOTE BLOCK INSERTED AT THE BOTTOM OF THE TABLE
                     st.markdown(
-                        "**1. Global Accuracy Row Convention:** Accuracy represents a single global ratio of total "
-                        "correct predictions divided by total rows. The static appearance of this value across "
-                        "the columns is a standard formatting convention of the Scikit-Learn engine to maintain table alignment."
+                        "<div style='font-size: 11px; color: #7f8c8d; line-height: 1.4; margin-top: 15px; border-top: 1px dashed #dcdde1; padding-top: 10px;'>"
+                        "<strong>ℹ️ Performance Metrology Reference Footnote:</strong><br>"
+                        "• <strong>Global Accuracy Row Convention:</strong> Accuracy represents a single global ratio of total correct predictions divided by total rows. Its static appearance across columns is a standard layout design convention of the Scikit-Learn engine to maintain table alignment.<br>"
+                        "• <strong>Macro Avg vs. Weighted Avg:</strong> The <em>Macro Average</em> takes an unweighted mean treating both classes equally to show minority churn capturing efficiency. The <em>Weighted Average</em> scales scores proportionally based on the Instance Count (Support), causing it to naturally skew toward the dominant 'No Churn' category.<br>"
+                        "• <strong>Exclusion of Live AUC:</strong> AUC tracks continuous prediction probabilities over a global range. Because this interactive tab operates as a transactional inference engine providing immediate class assignments, it prioritizes direct discrete metrics (Accuracy, Precision, Recall, F1, and MCC)."
+                        "</div>",
+                        unsafe_allow_html=True
                     )
-                    st.markdown(
-                        "**2. Macro Avg vs. Weighted Avg:** The **Macro Average** calculates the metric for each class "
-                        "independently and takes an unweighted mean, treating both classes equally to show minority class "
-                        "capturing efficiency. The **Weighted Average** scales the scores proportionally based on the "
-                        "Instance Count (Support), causing it to skew toward the dominant 'No Churn' category."
-                    )
-                    st.markdown(
-                        "**3. Exclusion of Live AUC:** AUC tracks continuous prediction probabilities over a global range. "
-                        "Because this interactive tab operates as a transactional inference engine providing immediate class "
-                        "assignments, it prioritizes direct discrete metrics (Accuracy, Precision, Recall, F1, and MCC)."
-                    )
-                    st.markdown("---")
                     
                 with c_right:
                     st.subheader("🗺️ Confusion Matrix")
