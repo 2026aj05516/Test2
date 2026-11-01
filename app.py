@@ -152,6 +152,27 @@ if scaler is not None:
                         
                     st.dataframe(report_frame.style.format(precision=4))
                     
+                    # 💡 COMPLIANT METROLOGY REFERENCE NOTE INSERTED AT THE BOTTOM OF THE TABLE
+                    st.markdown("---")
+                    st.markdown("### 🔎 Performance Metrology Reference Note")
+                    st.markdown(
+                        "**1. Global Accuracy Row Convention:** Accuracy represents a single global ratio of total "
+                        "correct predictions divided by total rows. The static appearance of this value across "
+                        "the columns is a standard formatting convention of the Scikit-Learn engine to maintain table alignment."
+                    )
+                    st.markdown(
+                        "**2. Macro Avg vs. Weighted Avg:** The **Macro Average** calculates the metric for each class "
+                        "independently and takes an unweighted mean, treating both classes equally to show minority class "
+                        "capturing efficiency. The **Weighted Average** scales the scores proportionally based on the "
+                        "Instance Count (Support), causing it to skew toward the dominant 'No Churn' category."
+                    )
+                    st.markdown(
+                        "**3. Exclusion of Live AUC:** AUC tracks continuous prediction probabilities over a global range. "
+                        "Because this interactive tab operates as a transactional inference engine providing immediate class "
+                        "assignments, it prioritizes direct discrete metrics (Accuracy, Precision, Recall, F1, and MCC)."
+                    )
+                    st.markdown("---")
+                    
                 with c_right:
                     st.subheader("🗺️ Confusion Matrix")
                     fig, ax = plt.subplots(figsize=(4, 3))
