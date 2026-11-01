@@ -86,7 +86,7 @@ if scaler is not None:
                     kc = set(label_encoders[col].classes_)
                     X_eval[col] = X_eval[col].astype(str).str.strip().apply(lambda x: label_encoders[col].transform([x]) if x in kc else 0)
             
-                        # -----------------------------------------------------------------
+            # -----------------------------------------------------------------
             # RUNTIME BRANCHING: CLASSIFICATION METRICS INFERENCE ENGINE
             # -----------------------------------------------------------------
             if selected_model_display == "KNN":
@@ -106,7 +106,7 @@ if scaler is not None:
                 # Linear and geometric margin estimators ingest standardized continuous parameters
                 y_eval_preds = models[selected_model_key].predict(scaler.transform(X_eval))
             
-            # Output predictions directly to data panel spreadsheet logs
+                        # Output predictions directly to data panel spreadsheet logs
             output_df = test_df.copy()
             output_df['Predicted_Churn_Class'] = y_eval_preds
             st.success(f"🎯 Inference calculations successfully completed via {selected_model_display}!")
@@ -114,38 +114,39 @@ if scaler is not None:
             
             tc_candidates = [c for c in test_df.columns if 'target' in c.lower() or 'churn' in c.lower()]
             if tc_candidates:
-                target_string_name = tc_candidates
+                # FIXED: Force explicit 1D Series conversion by selecting the string column name directly
+                target_string_name = tc_candidates[0]
                 y_true = test_df[target_string_name].copy()
                 
-                if y_true.dtype == 'object' or y_true.dtype == 'category':
+                # Check underlying sequence datatype securely for text strings or categories
+                if isinstance(y_true.dtype, pd.CategoricalDtype) or y_true.dtype == 'object':
                     if '__target__' in label_encoders:
                         ktc = set(label_encoders['__target__'].classes_)
-                        y_true = y_true.astype(str).str.strip().apply(lambda x: label_encoders['__target__'].transform([x]) if x in ktc else 0)
+                        y_true = y_true.astype(str).str.strip().apply(lambda x: label_encoders['__target__'].transform([x])[0] if x in ktc else 0)
                     else:
                         y_true = y_true.astype(str).str.strip().map({'Yes': 1, 'No': 0}).fillna(0).astype(int)
                 
                 st.markdown("---")
                 st.header(f"📈 Real-Time Performance Analytics: {selected_model_display}")
                 
-                # FIXED: Added Matthews Correlation Coefficient (MCC) to the horizontal grid layout
+                # Render comprehensive 5-metric summary dashboard cards layout
                 m1, m2, m3, m4, m5 = st.columns(5)
                 m1.metric("Accuracy", f"{accuracy_score(y_true, y_eval_preds):.4f}")
                 m2.metric("Precision", f"{precision_score(y_true, y_eval_preds, zero_division=0):.4f}")
                 m3.metric("Recall", f"{recall_score(y_true, y_eval_preds, zero_division=0):.4f}")
                 m4.metric("F1-Score", f"{f1_score(y_true, y_eval_preds, zero_division=0):.4f}")
                 
-                # Dynamic generation of Matthews Correlation Coefficient calculation metric
+                # Compute and display Matthews Correlation Coefficient
                 live_mcc = matthews_corrcoef(y_true, y_eval_preds)
                 m5.metric("MCC Score", f"{live_mcc:.4f}")
                 
                 c_left, c_right = st.columns(2)
                 with c_left:
                     st.subheader("🧮 Classification Report Matrix")
-                    # Generate report dictionary logs from scikit-learn metrics engine
                     report_dict = classification_report(y_true, y_eval_preds, output_dict=True, zero_division=0)
                     report_frame = pd.DataFrame(report_dict).transpose()
                     
-                    # FIXED: Renamed the confusing "support" text layout name to a clear academic format
+                    # Clean up technical column strings for presentation scoring layout formatting
                     if "support" in report_frame.columns:
                         report_frame = report_frame.rename(columns={"support": "Instance Count (Support)"})
                         
