@@ -114,7 +114,7 @@ if scaler is not None:
             
             tc_candidates = [c for c in test_df.columns if 'target' in c.lower() or 'churn' in c.lower()]
             if tc_candidates:
-                target_string_name = tc_candidates[0]
+                target_string_name = tc_candidates
                 y_true = test_df[target_string_name].copy()
                 
                 if y_true.dtype == 'object' or y_true.dtype == 'category':
@@ -124,20 +124,37 @@ if scaler is not None:
                     else:
                         y_true = y_true.astype(str).str.strip().map({'Yes': 1, 'No': 0}).fillna(0).astype(int)
                 
-                m1, m2, m3, m4 = st.columns(4)
+                st.markdown("---")
+                st.header(f"📈 Real-Time Performance Analytics: {selected_model_display}")
+                
+                # FIXED: Added Matthews Correlation Coefficient (MCC) to the horizontal grid layout
+                m1, m2, m3, m4, m5 = st.columns(5)
                 m1.metric("Accuracy", f"{accuracy_score(y_true, y_eval_preds):.4f}")
                 m2.metric("Precision", f"{precision_score(y_true, y_eval_preds, zero_division=0):.4f}")
                 m3.metric("Recall", f"{recall_score(y_true, y_eval_preds, zero_division=0):.4f}")
                 m4.metric("F1-Score", f"{f1_score(y_true, y_eval_preds, zero_division=0):.4f}")
                 
+                # Dynamic generation of Matthews Correlation Coefficient calculation metric
+                live_mcc = matthews_corrcoef(y_true, y_eval_preds)
+                m5.metric("MCC Score", f"{live_mcc:.4f}")
+                
                 c_left, c_right = st.columns(2)
                 with c_left:
-                    st.subheader("🧮 Classification Report")
-                    st.dataframe(pd.DataFrame(classification_report(y_true, y_eval_preds, output_dict=True, zero_division=0)).transpose())
+                    st.subheader("🧮 Classification Report Matrix")
+                    # Generate report dictionary logs from scikit-learn metrics engine
+                    report_dict = classification_report(y_true, y_eval_preds, output_dict=True, zero_division=0)
+                    report_frame = pd.DataFrame(report_dict).transpose()
+                    
+                    # FIXED: Renamed the confusing "support" text layout name to a clear academic format
+                    if "support" in report_frame.columns:
+                        report_frame = report_frame.rename(columns={"support": "Instance Count (Support)"})
+                        
+                    st.dataframe(report_frame.style.format(precision=4))
+                    
                 with c_right:
                     st.subheader("🗺️ Confusion Matrix")
                     fig, ax = plt.subplots(figsize=(4, 3))
-                    sns.heatmap(confusion_matrix(y_true, y_eval_preds), annot=True, fmt='d', cmap='Blues', cbar=False, ax=ax, xticklabels=['No', 'Yes'], yticklabels=['No', 'Yes'])
+                    sns.heatmap(confusion_matrix(y_true, y_eval_preds), annot=True, fmt='d', cmap='Blues', cbar=False, ax=ax, xticklabels=['No Churn', 'Churn'], yticklabels=['No Churn', 'Churn'])
                     st.pyplot(fig)
         else:
             st.info("ℹ️ Upload 'test_data.csv' via the sidebar panel to trigger pipeline calculations.")
