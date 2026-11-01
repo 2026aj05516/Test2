@@ -140,7 +140,7 @@ if scaler is not None:
                 live_mcc = matthews_corrcoef(y_true, y_eval_preds)
                 m5.metric("MCC Score", f"{live_mcc:.4f}")
                 
-                                c_left, c_right = st.columns(2)
+                c_left, c_right = st.columns(2)
                 with c_left:
                     st.subheader("🧮 Classification Report Matrix")
                     report_dict = classification_report(y_true, y_eval_preds, output_dict=True, zero_division=0)
