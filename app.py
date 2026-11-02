@@ -100,7 +100,7 @@ if scaler is not None:
     
     with tab2:
         st.header("📄 STEP 5: MODEL EVALUATION MATRIX AND PERFORMANCE")
-        st.markdown("**GitHub URL:** [https://github.com](https://github.com)")
+        st.markdown("**GitHub URL:** [https://github.com/2026aj05516/Test2.git](https://github.com/2026aj05516/Test2.git)")
         
         # Format the metric summary grid with maximum F1 tracking markers highlighted in light green
         st.dataframe(pd.DataFrame(baseline_metrics).T.style.format("{:.4f}").highlight_max(axis=0, color="#d4edda"))
