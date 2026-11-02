@@ -68,15 +68,14 @@ scaler, label_encoders, feature_names, models = load_assets()
 # PERFORMANCE MATRIX OVERVIEW
 # -------------------------------------------------------------------------
 # This dictionary contains the exact model evaluation values generated 
-# inside your Part 1 validation script. Storing this frozen dictionary ensures 
-# your formal Step 5 presentation grid remains verifiable and clean.
+# by training model.  
 
 baseline_metrics = {
-    "Logistic Regression": {"Accuracy": 0.8023, "AUC": 0.8412, "Precision": 0.6512, "Recall": 0.5421, "F1": 0.5923, "MCC": 0.4612},
-    "Decision Tree": {"Accuracy": 0.7241, "AUC": 0.6841, "Precision": 0.4812, "Recall": 0.5163, "F1": 0.4983, "MCC": 0.3121},
-    "KNN (Gower Optimized)": {"Accuracy": 0.7854, "AUC": 0.8142, "Precision": 0.6124, "Recall": 0.5341, "F1": 0.5705, "MCC": 0.4312},
-    "Naive Bayes": {"Accuracy": 0.7512, "AUC": 0.8241, "Precision": 0.5231, "Recall": 0.7612, "F1": 0.6201, "MCC": 0.4814},
-    "Support Vector Machine": {"Accuracy": 0.7984, "AUC": 0.8321, "Precision": 0.6421, "Recall": 0.5163, "F1": 0.5721, "MCC": 0.4412}
+    "Logistic Regression": {"Accuracy": 0.8070, "AUC": 0.8479, "Precision": 0.6667, "Recall": 0.5455, "F1": 0.6000, "MCC": 0.4786},
+    "Decision Tree": {"Accuracy": 0.7275, "AUC": 0.657, "Precision": 0.4871, "Recall": 0.5053, "F1": 0.4961, "MCC": 0.3095},
+    "KNN (Gower Optimized)": {"Accuracy": 0.7594, "AUC": 0.7736, "Precision": 0.5499, "Recall": 0.5160, "F1": 0.5324, "MCC": 0.3710},
+    "Naive Bayes": {"Accuracy": 0.7395, "AUC": 0.8268, "Precision": 0.5060, "Recall": 0.7861, "F1": 0.6157, "MCC": 0.4564},
+    "Support Vector Machine": {"Accuracy": 0.7921, "AUC": 0.7928, "Precision": 0.6484, "Recall": 0.4733, "F1": 0.5471, "MCC": 0.4251}
 }
 
 # -------------------------------------------------------------------------
@@ -96,17 +95,17 @@ if scaler is not None:
     tab1, tab2 = st.tabs(["🎯 Interactive Live Evaluation Inference", "📜 Mandatory Assignment Submission Report"])
 
     # =========================================================================
-    # SUBMISSION LAYER: TAB 2 - EVALUATOR DASHBOARD BLUEPRINT
+    # SUBMISSION LAYER: TAB 2 - Model Evaluation
     # =========================================================================
     
     with tab2:
-        st.header("📄 STEP 5: GRADED SUBMISSION PROOF MATRIX")
+        st.header("📄 STEP 5: MODEL EVALUATION MATRIX AND PERFORMANCE")
         st.markdown("**GitHub URL:** [https://github.com](https://github.com)")
         
         # Format the metric summary grid with maximum F1 tracking markers highlighted in light green
         st.dataframe(pd.DataFrame(baseline_metrics).T.style.format("{:.4f}").highlight_max(axis=0, color="#d4edda"))
 
-        # Build analytical text observation grids matching visual assessment guideline
+        # Build analytical text observation grids matching assugnment guidelines
         obs_df = pd.DataFrame({
             "ML Model Name": ["Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Support Vector Machine"],
             "Observation about model performance": [
@@ -118,7 +117,7 @@ if scaler is not None:
             ]
         })
         st.table(obs_df.set_index("ML Model Name"))
-        st.success("🏆 Winner Justification: Naive Bayes wins with an F1 of 0.6201. Class imbalance favors joint-conditional probabilistic models over distance-based neighbor votes under extreme minority class skew.")
+        st.success(" Winner Justification: Naive Bayes wins with an F1 of 0.6157. Class imbalance favors joint-conditional probabilistic models over distance-based neighbor votes under extreme minority class skew.")
     
     # =========================================================================
     # INFERENCE LAYER: TAB 1 - DYNAMIC REAL-TIME PREDICTIONS MATRIX
